@@ -1,174 +1,166 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>하트 테트리스 (최종 안정화)</title>
-    <style>
-        /* 1. CSS: 스타일 정의 */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #36454F;
-            margin: 0;
-            font-family: 'Malgun Gothic', 'Arial', sans-serif;
-            flex-direction: column;
-        }
+<meta charset="UTF-8">
+<title>❤️ 하트 테트리스 ❤️</title>
 
-        /* 닉네임 표시 영역 */
-        #nickname-display {
-            color: #E6E6FA;
-            margin-bottom: 5px;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #36454F;
+    font-family: 'Malgun Gothic', Arial, sans-serif;
+}
 
-        #score {
-            color: #E6E6FA;
-            margin-bottom: 20px; 
-            font-size: 2.2em;
-            font-weight: bold;
-            text-shadow: 2px 2px #483D8B;
-        }
+#start-screen {
+    background: #1a1a2e;
+    padding: 30px;
+    border: 8px solid #E0B0FF;
+    border-radius: 10px;
+    text-align: center;
+    color: #E6E6FA;
+}
 
-        /* 닉네임 입력 화면 스타일 */
-        #start-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px;
-            background-color: #1a1a2e;
-            border: 8px solid #E0B0FF;
-            border-radius: 10px;
-            color: #E6E6FA;
-        }
+#nickname-input {
+    padding: 10px;
+    margin: 15px 0;
+    font-size: 1em;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+}
 
-        #nickname-input {
-            padding: 10px;
-            margin: 15px 0;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
-            text-align: center;
-        }
+#start-button {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    background: #B57EDC;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-        #start-button {
-            padding: 10px 20px;
-            background-color: #B57EDC;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.2s;
-        }
-        #start-button:hover {
-            background-color: #9370DB;
-        }
-        
-        /* 게임 보드 스타일 */
-        #game-area {
-            display: none; /* 초기에는 숨김 */
-            align-items: center;
-            flex-direction: column;
-        }
+#start-button:hover {
+    background: #9370DB;
+}
 
-        #game-container {
-            border: 8px solid #E0B0FF;
-            background-color: #1a1a2e;
-            display: inline-block;
-        }
+#game-area {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
 
-        #game-board {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            grid-template-rows: repeat(20, 1fr);
-            gap: 1px;
-        }
+#nickname-display {
+    color: #E6E6FA;
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
 
-        .cell {
-            width: 30px;
-            height: 30px;
-            background-color: #111;
-            box-sizing: border-box;
-            border: 1px solid #000;
-            
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #222; 
-            font-size: 1.2em;
-            font-weight: bold;
-        }
+#score {
+    color: #E6E6FA;
+    font-size: 2em;
+    margin-bottom: 15px;
+}
 
-        /* 파스텔 톤 블록 색상 클래스 */
-        .T { background-color: #B57EDC; border: 1px solid #9370DB; }
-        .L { background-color: #FFB7C5; border: 1px solid #FF9DBF; }
-        .J { background-color: #ADD8E6; border: 1px solid #87CEEB; }
-        .I { background-color: #AFEEEE; border: 1px solid #7FFFD4; }
-        .O { background-color: #FFFF99; border: 1px solid #FFFF66; }
-        .S { background-color: #98FB98; border: 1px solid #7CFC00; }
-        .Z { background-color: #FFC0CB; border: 1px solid #FF69B4; }
+#game-container {
+    border: 8px solid #E0B0FF;
+    background: #1a1a2e;
+}
 
-        .controls {
-            color: #E6E6FA;
-            margin-top: 15px;
-            font-size: 1em;
-        }
-    </style>
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(20, 30px);
+    gap: 1px;
+}
+
+.cell {
+    background: #111;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+}
+
+.T { background: #B57EDC; }
+.L { background: #FFB7C5; }
+.J { background: #ADD8E6; }
+.I { background: #AFEEEE; }
+.O { background: #FFFF99; }
+.S { background: #98FB98; }
+.Z { background: #FFC0CB; }
+
+.controls {
+    color: #E6E6FA;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+</style>
 </head>
+
 <body>
 
-    <div id="start-screen">
-        <h1>❤️ 하트 테트리스 ❤️</h1>
-        <label for="nickname-input">닉네임을 입력해 주세요:</label>
-        <input type="text" id="nickname-input" placeholder="여기에 닉네임을 입력" maxlength="15">
-        <button id="start-button">게임 시작</button>
+<div id="start-screen">
+    <h1>❤️ 하트 테트리스 ❤️</h1>
+    <p>닉네임을 입력하세요</p>
+    <input id="nickname-input" maxlength="15">
+    <br>
+    <button id="start-button">게임 시작</button>
+</div>
+
+<div id="game-area">
+    <div id="nickname-display"></div>
+    <div id="score">점수: 0</div>
+
+    <div id="game-container">
+        <div id="game-board"></div>
     </div>
 
-    <div id="game-area">
-        <div id="nickname-display"></div>
-        <div id="score">점수: 0</div> 
-
-        <div id="game-container">
-            <div id="game-board">
-                </div>
-        </div>
-        
-        <div class="controls">
-            <p>키보드: ←, → (이동), ↓ (빠른 하강), ↑ (회전)</p>
-            <p style="font-size: 0.9em; color: #aaa;">(하강 속도: 1.5초로 난이도 하향됨)</p>
-        </div>
+    <div class="controls">
+        ← → 이동 / ↑ 회전 / ↓ 빠른 하강
     </div>
+</div>
 
-    <script>
-        // DOM 요소 참조
-        const startScreen = document.getElementById('start-screen');
-        const gameArea = document.getElementById('game-area');
-        const nicknameInput = document.getElementById('nickname-input');
-        const startButton = document.getElementById('start-button');
-        const nicknameDisplay = document.getElementById('nickname-display');
-        const boardElement = document.getElementById('game-board');
-        const scoreElement = document.getElementById('score');
-        
-        // 게임 상태 변수
-        const COLS = 10;
-        const ROWS = 20;
-        const speed = 1500; // 1.5초
+<script>
+const COLS = 10;
+const ROWS = 20;
+const SPEED = 1500;
 
-        let board = [];
-        let cells = []; 
-        let currentPiece;
-        let currentX = 0;
-        let currentY = 0;
-        let score = 0;
-        let gameInterval;
-        
-        // 테트로미노 정의
-        const TETROMINOES = [
-            { shape: [[0,1,1], [1,1,0], [0,0,0]], color: 'S' },
-            { shape: [[1,1,0], [0,1,1], [0,0,0]], color: 'Z' },
-            { shape: [[1,0,0], [1,1,1], [0,0,0]], color: 'J' },
-            { shape: [[0,0,1], [1,1,1], [0,0,0]], color: 'L' },
-            { shape: [[0,0,0,
+const boardEl = document.getElementById("game-board");
+const startScreen = document.getElementById("start-screen");
+const gameArea = document.getElementById("game-area");
+const nicknameInput = document.getElementById("nickname-input");
+const nicknameDisplay = document.getElementById("nickname-display");
+const scoreEl = document.getElementById("score");
+
+let board = [];
+let cells = [];
+let currentPiece;
+let x = 0;
+let y = 0;
+let score = 0;
+let timer;
+
+const TETROMINOES = [
+    {shape:[[1,1,0],[0,1,1],[0,0,0]], color:"Z"},
+    {shape:[[0,1,1],[1,1,0],[0,0,0]], color:"S"},
+    {shape:[[1,0,0],[1,1,1],[0,0,0]], color:"J"},
+    {shape:[[0,0,1],[1,1,1],[0,0,0]], color:"L"},
+    {shape:[[1,1],[1,1]], color:"O"},
+    {shape:[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]], color:"I"},
+    {shape:[[0,1,0],[1,1,1],[0,0,0]], color:"T"}
+];
+
+function createBoard() {
+    board = Array.from({length: ROWS}, () => Array(COLS).fill(0));
+    boardEl.innerHTML = "";
+    cells = [];
+
+    for (let r = 0; r < ROWS; r++) {
+        cells[r] = [];
+        for (let c = 0; c < COLS; c++) {
