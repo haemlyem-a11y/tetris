@@ -217,5 +217,109 @@
                                 cells[y][x].className = `cell ${color}`;
 
                                 // 2. 텍스트 적용 ('홍원' 글자를 순서대로 분배)
-                                // 블록의 첫 번째 셀에 '
-       
+                                // 블록의 첫 번째 셀에 '홍', 두 번째 셀에 '원', 나머지 셀은 빈 문자열을 넣음.
+                                if (textIndex < text.length) {
+                                    cells[y][x].textContent = text[textIndex];
+                                } else {
+                                    cells[y][x].textContent = '';
+                                }
+                                textIndex++;
+
+                                // (선택 사항: 모든 셀에 '홍원'을 반복적으로 넣으려면 아래 코드를 사용)
+                                // cells[y][x].textContent = '홍원';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 고정된 블록과 현재 블록 모두를 화면에 업데이트
+        function redrawBoard() {
+            // 1. 고정된 블록(board 배열) 그리기 (텍스트 없이 색상만)
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cellValue = board[r][c];
+                    const colorClass = cellValue === 0 ? '' : TETROMINOES[cellValue - 1].color; 
+                    
+                    // 고정된 블록은 텍스트를 비움
+                    cells[r][c].className = `cell ${colorClass}`;
+                    cells[r][c].textContent = ''; 
+                }
+            }
+            // 2. 현재 움직이는 블록 그리기 (여기에 텍스트가 삽입됨)
+            drawPiece();
+            // 3. 점수 업데이트
+            updateScore(); 
+        }
+
+        // --- 4. 게임 로직 함수 (변경 없음) ---
+
+        function lockPiece() {
+            const shape = currentPiece.shape;
+            const pieceIndex = TETROMINOES.findIndex(t => t.color === currentPiece.color) + 1;
+
+            for (let r = 0; r < shape.length; r++) {
+                for (let c = 0; c < shape[r].length; c++) {
+                    if (shape[r][c]) {
+                        const y = currentY + r;
+                        const x = currentX + c;
+                        if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+                            board[y][x] = pieceIndex;
+                        }
+                    }
+                }
+            }
+            // TODO: 줄 제거 및 점수 업데이트 로직 추가 필요
+
+            newPiece();
+        }
+
+        // 메인 게임 루프 (블록 자동 하강)
+        function gameLoop() {
+            clearPiece();
+
+            if (isValidMove(currentPiece.shape, currentX, currentY + 1)) {
+                currentY++;
+            } else {
+                lockPiece();
+            }
+            
+            redrawBoard();
+        }
+
+        // --- 5. 이벤트 핸들러 (변경 없음) ---
+
+        document.addEventListener('keydown', (e) => {
+            clearPiece();
+            let newX = currentX;
+            let newY = currentY;
+
+            if (e.key === 'ArrowLeft') {
+                newX--;
+            } else if (e.key === 'ArrowRight') {
+                newX++;
+            } else if (e.key === 'ArrowDown') {
+                newY++;
+            }
+            
+            if (isValidMove(currentPiece.shape, newX, newY)) {
+                currentX = newX;
+                currentY = newY;
+            } else if (e.key === 'ArrowDown') {
+                 lockPiece();
+            }
+
+            redrawBoard();
+        });
+
+
+        // --- 게임 시작 ---
+        createBoard();
+        updateScore();
+        newPiece();
+        gameInterval = setInterval(gameLoop, speed);
+
+    </script>
+</body>
+</html>
