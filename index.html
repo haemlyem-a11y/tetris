@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>홍원 테트리스 (파스텔 톤)</title>
     <style>
-        /* 1. CSS: 스타일 */
+        /* 1. CSS: 스타일 및 파스텔 톤 정의 */
         body {
             display: flex;
             justify-content: center;
@@ -44,32 +44,28 @@
             box-sizing: border-box;
             border: 1px solid #000;
             
-            /* 텍스트 중앙 정렬을 위한 설정 */
+            /* 텍스트 중앙 정렬 설정 */
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #36454F; /* 텍스트 색상 (배경과 대비되게) */
+            color: #222; /* 텍스트 색상 */
             font-size: 0.7em;
             font-weight: bold;
             padding: 0;
             margin: 0;
+            /* 텍스트가 너무 길면 잘리도록 숨김 */
+            overflow: hidden; 
         }
 
         /* 2. 파스텔 톤 블록 색상 클래스 */
-        .T { background-color: #B57EDC; border: 1px solid #9370DB; } /* 연한 보라색 (Wisteria) */
-        .L { background-color: #FFB7C5; border: 1px solid #FF9DBF; } /* 연한 분홍색 (Cherry Blossom) */
-        .J { background-color: #ADD8E6; border: 1px solid #87CEEB; } /* 연한 파란색 (Light Sky Blue) */
-        .I { background-color: #AFEEEE; border: 1px solid #7FFFD4; } /* 연한 청록색 (Aquamarine) */
-        .O { background-color: #FFFF99; border: 1px solid #FFFF66; } /* 연한 노란색 (Pastel Yellow) */
-        .S { background-color: #98FB98; border: 1px solid #7CFC00; } /* 연한 녹색 (Pale Green) */
-        .Z { background-color: #FFC0CB; border: 1px solid #FF69B4; } /* 핫핑크 계열 (Pink) */
+        .T { background-color: #B57EDC; border: 1px solid #9370DB; }
+        .L { background-color: #FFB7C5; border: 1px solid #FF9DBF; }
+        .J { background-color: #ADD8E6; border: 1px solid #87CEEB; }
+        .I { background-color: #AFEEEE; border: 1px solid #7FFFD4; }
+        .O { background-color: #FFFF99; border: 1px solid #FFFF66; }
+        .S { background-color: #98FB98; border: 1px solid #7CFC00; }
+        .Z { background-color: #FFC0CB; border: 1px solid #FF69B4; }
 
-        /* 움직이는 블록에만 '홍원' 텍스트를 적용하기 위한 클래스 */
-        .active-text {
-            color: #222; /* 텍스트 색상을 어둡게 하여 블록 색상과 대비 */
-            text-shadow: none;
-        }
-        
         .controls {
             color: #E6E6FA;
             margin-top: 15px;
@@ -88,7 +84,7 @@
     
     <div class="controls">
         <p>키보드: ←, → (이동), ↓ (빠른 하강)</p>
-        <p style="font-size: 0.9em; color: #aaa;">(하강 속도: 1.5초)</p>
+        <p style="font-size: 0.9em; color: #aaa;">(하강 속도: 1.5초로 난이도 하향됨)</p>
     </div>
 
     <script>
@@ -97,8 +93,7 @@
         // 게임 설정
         const COLS = 10;
         const ROWS = 20;
-        const BOARD_ID = 'game-board';
-        const boardElement = document.getElementById(BOARD_ID);
+        const boardElement = document.getElementById('game-board');
         const scoreElement = document.getElementById('score');
 
         // 게임 상태 배열
@@ -111,9 +106,8 @@
         let currentY = 0;
         let score = 0;
         let gameInterval;
-        let speed = 1500; // 난이도: 1.5초
+        let speed = 1500; // 난이도: 1.5초 (느린 속도)
 
-        // 테트로미노 모양 정의 (이전과 동일)
         const TETROMINOES = [
             { shape: [[0,1,1], [1,1,0], [0,0,0]], color: 'S' },
             { shape: [[1,1,0], [0,1,1], [0,0,0]], color: 'Z' },
@@ -124,7 +118,7 @@
             { shape: [[0,1,0], [1,1,1], [0,0,0]], color: 'T' }
         ];
 
-        // --- 1. 초기화 함수 ---
+        // --- 초기화 및 상태 함수 ---
 
         function createBoard() {
             for (let r = 0; r < ROWS; r++) {
@@ -141,8 +135,6 @@
         function updateScore() {
             scoreElement.textContent = `점수: ${score}`;
         }
-
-        // --- 2. 블록 및 위치 관련 함수 (변경 없음) ---
 
         function newPiece() {
             const randomIndex = Math.floor(Math.random() * TETROMINOES.length);
@@ -175,7 +167,7 @@
             return true;
         }
 
-        // --- 3. 렌더링 함수 (홍원 텍스트 표시 로직 추가) ---
+        // --- 렌더링 함수 (홍원 텍스트 로직) ---
 
         // 현재 블록을 보드에서 제거 (이동 전 상태)
         function clearPiece() {
@@ -188,7 +180,7 @@
                             const x = currentX + c;
                             if (y >= 0) {
                                 cells[y][x].className = 'cell';
-                                cells[y][x].textContent = ''; // 텍스트 제거
+                                cells[y][x].textContent = ''; 
                             }
                         }
                     }
@@ -196,14 +188,12 @@
             }
         }
 
-        // 현재 블록을 보드에 그리기
+        // 현재 움직이는 블록을 보드에 그리기 ('홍원' 텍스트 적용)
         function drawPiece() {
             if (currentPiece) {
                 const shape = currentPiece.shape;
                 const color = currentPiece.color;
                 
-                // 블록을 구성하는 셀의 개수를 카운트 (텍스트 '홍원'을 분배하기 위함)
-                let cellCount = shape.flat().filter(c => c === 1).length;
                 let textIndex = 0;
                 const text = '홍원';
                 
@@ -216,17 +206,9 @@
                                 // 1. 색상 및 기본 클래스 적용
                                 cells[y][x].className = `cell ${color}`;
 
-                                // 2. 텍스트 적용 ('홍원' 글자를 순서대로 분배)
-                                // 블록의 첫 번째 셀에 '홍', 두 번째 셀에 '원', 나머지 셀은 빈 문자열을 넣음.
-                                if (textIndex < text.length) {
-                                    cells[y][x].textContent = text[textIndex];
-                                } else {
-                                    cells[y][x].textContent = '';
-                                }
+                                // 2. 텍스트 적용: '홍' 또는 '원'을 순서대로 넣고 나머지는 반복
+                                cells[y][x].textContent = text[textIndex % text.length];
                                 textIndex++;
-
-                                // (선택 사항: 모든 셀에 '홍원'을 반복적으로 넣으려면 아래 코드를 사용)
-                                // cells[y][x].textContent = '홍원';
                             }
                         }
                     }
@@ -236,24 +218,23 @@
 
         // 고정된 블록과 현재 블록 모두를 화면에 업데이트
         function redrawBoard() {
-            // 1. 고정된 블록(board 배열) 그리기 (텍스트 없이 색상만)
+            // 1. 고정된 블록(board 배열) 그리기 (색상만)
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     const cellValue = board[r][c];
                     const colorClass = cellValue === 0 ? '' : TETROMINOES[cellValue - 1].color; 
                     
-                    // 고정된 블록은 텍스트를 비움
                     cells[r][c].className = `cell ${colorClass}`;
-                    cells[r][c].textContent = ''; 
+                    cells[r][c].textContent = ''; // 고정 블록 텍스트 제거
                 }
             }
-            // 2. 현재 움직이는 블록 그리기 (여기에 텍스트가 삽입됨)
+            // 2. 현재 움직이는 블록 그리기 (텍스트 적용)
             drawPiece();
             // 3. 점수 업데이트
             updateScore(); 
         }
 
-        // --- 4. 게임 로직 함수 (변경 없음) ---
+        // --- 게임 로직 함수 ---
 
         function lockPiece() {
             const shape = currentPiece.shape;
@@ -288,7 +269,7 @@
             redrawBoard();
         }
 
-        // --- 5. 이벤트 핸들러 (변경 없음) ---
+        // --- 이벤트 핸들러 ---
 
         document.addEventListener('keydown', (e) => {
             clearPiece();
@@ -302,11 +283,13 @@
             } else if (e.key === 'ArrowDown') {
                 newY++;
             }
+            // TODO: 회전 로직 (ArrowUp) 추가 필요
             
             if (isValidMove(currentPiece.shape, newX, newY)) {
                 currentX = newX;
                 currentY = newY;
             } else if (e.key === 'ArrowDown') {
+                 // 아래로 이동 불가 시 즉시 고정
                  lockPiece();
             }
 
