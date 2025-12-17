@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>닉네임 테트리스</title>
+    <title>하트 테트리스</title>
     <style>
         /* 1. CSS: 기본 스타일 유지 */
         body {
@@ -67,7 +67,7 @@
             background-color: #9370DB;
         }
         
-        /* 게임 보드 스타일 (이전 코드와 동일) */
+        /* 게임 보드 스타일 */
         #game-area {
             display: none; /* 초기에는 숨김 */
             align-items: center;
@@ -98,7 +98,7 @@
             justify-content: center;
             align-items: center;
             color: #222; 
-            font-size: 0.7em;
+            font-size: 1.2em; /* 하트 크기 조절 */
             font-weight: bold;
         }
 
@@ -121,7 +121,7 @@
 <body>
 
     <div id="start-screen">
-        <h1>테트리스를 시작합니다.</h1>
+        <h1>❤️ 하트 테트리스 ❤️</h1>
         <label for="nickname-input">닉네임을 입력해 주세요:</label>
         <input type="text" id="nickname-input" placeholder="여기에 닉네임을 입력" maxlength="15">
         <button id="start-button">게임 시작</button>
@@ -138,7 +138,7 @@
         
         <div class="controls">
             <p>키보드: ←, → (이동), ↓ (빠른 하강), ↑ (회전)</p>
-            <p style="font-size: 0.9em; color: #aaa;">(하강 속도: 1.5초)</p>
+            <p style="font-size: 0.9em; color: #aaa;">(하강 속도: 1.5초로 난이도 하향됨)</p>
         </div>
     </div>
 
@@ -166,80 +166,10 @@
         let currentY = 0;
         let score = 0;
         let gameInterval;
-        let speed = 1500; 
+        let speed = 1500; // 난이도: 1.5초
 
-        // 테트로미노 정의 (이전 코드와 동일)
+        // 테트로미노 정의
         const TETROMINOES = [
             { shape: [[0,1,1], [1,1,0], [0,0,0]], color: 'S' },
             { shape: [[1,1,0], [0,1,1], [0,0,0]], color: 'Z' },
-            { shape: [[1,0,0], [1,1,1], [0,0,0]], color: 'J' },
-            { shape: [[0,0,1], [1,1,1], [0,0,0]], color: 'L' },
-            { shape: [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]], color: 'I' },
-            { shape: [[1,1], [1,1]], color: 'O' },
-            { shape: [[0,1,0], [1,1,1], [0,0,0]], color: 'T' }
-        ];
-
-        // --- 핵심 함수 ---
-
-        function updateScore(linesCleared = 0) {
-            score += linesCleared * 100;
-            scoreElement.textContent = `점수: ${score}`;
-        }
-        
-        function isValidMove(shape, x, y) {
-            for (let r = 0; r < shape.length; r++) {
-                for (let c = 0; c < shape[r].length; c++) {
-                    if (shape[r][c]) {
-                        const newX = x + c;
-                        const newY = y + r;
-
-                        if (newX < 0 || newX >= COLS || newY >= ROWS || 
-                            (newY >= 0 && board[newY][newX] !== 0)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-
-        function newPiece() {
-            const randomIndex = Math.floor(Math.random() * TETROMINOES.length);
-            currentPiece = JSON.parse(JSON.stringify(TETROMINOES[randomIndex]));
-            currentX = Math.floor(COLS / 2) - Math.floor(currentPiece.shape[0].length / 2);
-            currentY = 0;
-
-            if (!isValidMove(currentPiece.shape, currentX, currentY)) {
-                clearInterval(gameInterval);
-                alert('Game Over! 최종 점수: ' + score);
-            }
-        }
-        
-        // --- 렌더링 함수 (홍원 텍스트 유지) ---
-
-        function clearPiece() {
-            if (!currentPiece) return;
-            const shape = currentPiece.shape;
-            for (let r = 0; r < shape.length; r++) {
-                for (let c = 0; c < shape[r].length; c++) {
-                    if (shape[r][c]) {
-                        const y = currentY + r;
-                        const x = currentX + c;
-                        if (y >= 0 && y < ROWS && x < COLS) {
-                            cells[y][x].className = 'cell';
-                            cells[y][x].textContent = '';
-                        }
-                    }
-                }
-            }
-        }
-
-        function drawPiece() {
-            if (!currentPiece) return;
-            const shape = currentPiece.shape;
-            const color = currentPiece.color;
-            const text = '홍원';
-            let textIndex = 0;
-
-            for (let r = 0; r < shape.length; r++) {
-                for (let c = 0; c < shape
+            { shape: [[1,0,0], [1,1,1], [0,0,0]],
